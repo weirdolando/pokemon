@@ -3,6 +3,7 @@ import { Roboto } from "next/font/google";
 import StyledComponentsRegistry from "./registry";
 import BottomNav from "./components/BottomNav/BottomNav";
 import { ApolloWrapper } from "@/lib/apollo-wrapper";
+import { AuthContextProvider } from "@/app/context/AuthContext";
 
 const roboto = Roboto({ subsets: ["latin"], weight: ["400", "500", "700"] });
 
@@ -17,7 +18,7 @@ export default function RootLayout({ children }) {
       <StyledComponentsRegistry>
         <body className={roboto.className}>
           <ApolloWrapper>
-            {children}
+            <AuthContextProvider>{children}</AuthContextProvider>
             <BottomNav />
           </ApolloWrapper>
         </body>

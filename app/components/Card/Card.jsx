@@ -1,6 +1,5 @@
 "use client";
 
-import { useRef } from "react";
 import Link from "next/link";
 import styled from "styled-components";
 
@@ -9,25 +8,43 @@ import { COLORS, WEIGHTS } from "@/app/constants";
 import UnstyledButton from "../UnstyledButton";
 import useIsMounted from "@/app/hooks/useIsMounted";
 import ImageWithFallback from "../ImageWithFallback";
+import { useAuthContext } from "@/app/context/AuthContext";
+import { useRouter } from "next/navigation";
+import addDocument from "@/app/firebase/firestore/addDocument";
+import deleteDocument from "@/app/firebase/firestore/deleteDocument";
 
 export default function Card({ pokemon, onSelectPokemon }) {
-  const wrapperRef = useRef();
+  const { user, userFavoritePokemon } = useAuthContext();
+  const { push } = useRouter();
+
+  const isUserFavorite = userFavoritePokemon.find(
+    (p) => p.pokemon.key === pokemon.key
+  );
 
   if (!useIsMounted()) return null;
 
-  function handleWrapperClick(e) {
-    /*
-      Condition to avoid triggering the onSelectPokemon
-      if the element who triggers the event is not this wrapper,
-      since I have a Button and a Link within this wrapper
-    */
-    if (e.target === wrapperRef.current) {
-      onSelectPokemon(pokemon);
+  async function handleToggleFavorites(e) {
+    e.stopPropagation();
+
+    if (!user) return push("/signin");
+
+    if (isUserFavorite) {
+      const { result, error } = await deleteDocument(
+        "FAVORITES",
+        isUserFavorite.docId
+      );
+      if (error) alert("Something went wrong");
+    } else {
+      const { result, error } = await addDocument("FAVORITES", {
+        user_id: user.uid,
+        pokemon: pokemon,
+      });
+      if (error) alert("Something went wrong");
     }
   }
 
   return (
-    <Wrapper onClick={handleWrapperClick} ref={wrapperRef}>
+    <Wrapper onClick={() => onSelectPokemon(pokemon)}>
       <div>
         <ImageWithFallback
           src={pokemon.sprite}
@@ -39,8 +56,8 @@ export default function Card({ pokemon, onSelectPokemon }) {
       </div>
       <Title>{pokemon.species}</Title>
       <ButtonGroupWrapper>
-        <UnstyledButton>
-          <Icon id="heart" size={24} />
+        <UnstyledButton onClick={handleToggleFavorites}>
+          <Icon id={isUserFavorite ? "heart-solid" : "heart"} size={24} />
         </UnstyledButton>
         <Link href={`/pokemon/${pokemon.key}`}>
           <Icon id="info" size={24} color="white" />

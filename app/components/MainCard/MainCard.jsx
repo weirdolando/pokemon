@@ -8,6 +8,10 @@ import ImageWithFallback from "../ImageWithFallback";
 import UnstyledButton from "../UnstyledButton";
 import Icon from "../Icon";
 import Spacer from "../Spacer/Spacer";
+import { useAuthContext } from "@/app/context/AuthContext";
+import deleteDocument from "@/app/firebase/firestore/deleteDocument";
+import addDocument from "@/app/firebase/firestore/addDocument";
+import { useRouter } from "next/navigation";
 
 const STYLES = {
   border: {
@@ -22,6 +26,31 @@ export default function MainCard({
   withButton = false,
   buttonLabel = "View more",
 }) {
+  const { user, userFavoritePokemon } = useAuthContext();
+  const { push } = useRouter();
+
+  const isUserFavorite = userFavoritePokemon.find(
+    (p) => p.pokemon.key === pokemon.key
+  );
+
+  async function handleToggleFavorites() {
+    if (!user) return push("/signin");
+
+    if (isUserFavorite) {
+      const { result, error } = await deleteDocument(
+        "FAVORITES",
+        isUserFavorite.docId
+      );
+      if (error) alert("Something went wrong");
+    } else {
+      const { result, error } = await addDocument("FAVORITES", {
+        user_id: user.uid,
+        pokemon: pokemon,
+      });
+      if (error) alert("Something went wrong");
+    }
+  }
+
   const style = STYLES[variant];
 
   if (!pokemon.species) {
@@ -39,7 +68,8 @@ export default function MainCard({
           key={pokemon.key}
           src={pokemon.sprite}
           fill
-          objectFit="contain"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          style={{ objectFit: "contain" }}
           alt={pokemon.species}
           quality={100}
         />
@@ -51,18 +81,22 @@ export default function MainCard({
           Object.values(pokemon.abilities).map((ability) => {
             if (ability && ability.desc) {
               return (
-                <>
-                  <p key={ability.key}>{ability.desc}</p>
+                <div key={ability.key}>
+                  <p>{ability.desc}</p>
                   <Spacer size={8} />
-                </>
+                </div>
               );
             } else return null;
           })}
         <ButtonWrapper>
-          <UnstyledButton>
-            <Icon id="heart" size={24} />
+          <UnstyledButton onClick={handleToggleFavorites}>
+            <Icon id={isUserFavorite ? "heart-solid" : "heart"} size={24} />
           </UnstyledButton>
-          {withButton && <LinkButton href="/detail">{buttonLabel}</LinkButton>}
+          {withButton && (
+            <LinkButton href={`/pokemon/${pokemon.key}`}>
+              {buttonLabel}
+            </LinkButton>
+          )}
         </ButtonWrapper>
       </ContentWrapper>
     </Wrapper>
@@ -70,7 +104,7 @@ export default function MainCard({
 }
 
 const PlaceholderCenter = styled.h3`
-  margin-block: auto;
+  margin: auto;
 `;
 
 const Wrapper = styled.article`
@@ -99,6 +133,8 @@ const ContentWrapper = styled.div`
   flex: 1 12 70%;
   border-top: var(--border);
   padding-top: var(--padding);
+  display: flex;
+  flex-direction: column;
 
   @media (min-width: 600px) {
     border-top: none;
@@ -108,11 +144,11 @@ const ContentWrapper = styled.div`
 `;
 
 const ButtonWrapper = styled.div`
+  margin-top: auto;
   display: flex;
   gap: 18px;
   align-items: center;
   justify-content: flex-end;
-  margin-top: 12px;
 `;
 
 const LinkButton = styled(Link)`
