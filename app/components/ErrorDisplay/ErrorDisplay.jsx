@@ -8,7 +8,7 @@ export default function ErrorDisplay({ title, message }) {
   return (
     <CenteredScreenWrapper>
       <Wrapper>
-        <Image src={Pokeball} width={150} height={150} />
+        <Image src={Pokeball} width={150} height={150} alt="pokeball" />
         <TextWrapper>
           <Title>{title}</Title>
           <Message>{message}</Message>

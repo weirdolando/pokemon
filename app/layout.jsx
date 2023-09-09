@@ -1,7 +1,6 @@
 import GlobalStyles from "./components/GlobalStyles";
 import { Roboto } from "next/font/google";
 import StyledComponentsRegistry from "./registry";
-import BottomNav from "./components/BottomNav/BottomNav";
 import { ApolloWrapper } from "@/lib/apollo-wrapper";
 import { AuthContextProvider } from "@/app/context/AuthContext";
 
@@ -19,7 +18,6 @@ export default function RootLayout({ children }) {
         <body className={roboto.className}>
           <ApolloWrapper>
             <AuthContextProvider>{children}</AuthContextProvider>
-            <BottomNav />
           </ApolloWrapper>
         </body>
       </StyledComponentsRegistry>

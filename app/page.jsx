@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import MainCard from "./components/MainCard";
 import styled from "styled-components";
@@ -8,13 +8,24 @@ import { COLORS, WEIGHTS } from "./constants";
 import Spacer from "./components/Spacer";
 import PokemonList from "./PokemonList";
 import MainHeader from "./components/MainHeader";
+import SplashScreen from "./components/SplashScreen";
+import BottomNav from "./components/BottomNav";
 
 export default function Home() {
   const [selectedPokemon, setSelectedPokemon] = useState({});
+  const [showSplashScreen, setShowSplashScreen] = useState(true);
 
   function handleSelectPokemon(pokemon) {
     setSelectedPokemon(pokemon);
   }
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowSplashScreen(false);
+    }, 2000);
+  }, []);
+
+  if (showSplashScreen) return <SplashScreen />;
 
   return (
     <>
@@ -28,6 +39,7 @@ export default function Home() {
         <PokemonList handleSelectPokemon={handleSelectPokemon} />
         <Spacer size={102} />
       </MainWrapper>
+      <BottomNav />
     </>
   );
 }

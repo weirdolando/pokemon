@@ -33,13 +33,25 @@ export default function Card({ pokemon, onSelectPokemon }) {
         "FAVORITES",
         isUserFavorite.docId
       );
-      if (error) alert("Something went wrong");
+      if (error) {
+        // console.log(error.code);
+        alert("Something went wrong");
+      }
     } else {
       const { result, error } = await addDocument("FAVORITES", {
         user_id: user.uid,
-        pokemon: pokemon,
+        // I only store these 4 data since firestore would send an error if the data is too large
+        pokemon: {
+          key: pokemon.key,
+          abilities: pokemon.abilities,
+          sprite: pokemon.sprite,
+          species: pokemon.species,
+        },
       });
-      if (error) alert("Something went wrong");
+      if (error) {
+        // console.log(error.code);
+        alert("Something went wrong");
+      }
     }
   }
 

@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import { useAuthContext } from "../context/AuthContext";
 import { useRouter } from "next/navigation";
 import ErrorDisplay from "../components/ErrorDisplay";
+import BottomNav from "../components/BottomNav";
 
 export default function Favorites() {
   const { user, userFavoritePokemon } = useAuthContext();
@@ -23,34 +24,40 @@ export default function Favorites() {
 
   if (!userFavoritePokemon.length) {
     return (
-      <ErrorDisplay
-        title="You have no favorite pokemon"
-        message="Try adding your favorite pokemon"
-      />
+      <>
+        <ErrorDisplay
+          title="You have no favorite pokemon"
+          message="Try adding your favorite pokemon"
+        />
+        <BottomNav />
+      </>
     );
   }
 
   return (
-    <MainWrapper className="screen-container">
-      <Spacer size={56} />
-      <Heading>Favorites</Heading>
-      {userFavoritePokemon.map((p) => (
-        <div key={p.pokemon.key}>
-          <MainCard
-            pokemon={p.pokemon}
-            variant="border"
-            withButton
-            buttonLabel="Detail"
-          />
-          <Spacer size={16} />
-        </div>
-      ))}
-      <Spacer size={16} />
-      <TotalPokemon>
-        You have {userFavoritePokemon.length} favorite pokemon
-      </TotalPokemon>
-      <Spacer size={102} />
-    </MainWrapper>
+    <>
+      <MainWrapper className="screen-container">
+        <Spacer size={56} />
+        <Heading>Favorites</Heading>
+        {userFavoritePokemon.map((p) => (
+          <div key={p.pokemon.key}>
+            <MainCard
+              pokemon={p.pokemon}
+              variant="border"
+              withButton
+              buttonLabel="Detail"
+            />
+            <Spacer size={16} />
+          </div>
+        ))}
+        <Spacer size={16} />
+        <TotalPokemon>
+          You have {userFavoritePokemon.length} favorite pokemon
+        </TotalPokemon>
+        <Spacer size={102} />
+      </MainWrapper>
+      <BottomNav />
+    </>
   );
 }
 

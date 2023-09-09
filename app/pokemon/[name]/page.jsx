@@ -10,6 +10,7 @@ import Spinner from "@/app/components/Spinner";
 import CenteredScreenWrapper from "@/app/components/CenteredScreenWrapper";
 import ErrorDisplay from "@/app/components/ErrorDisplay/ErrorDisplay";
 import Header from "@/app/components/Header/Header";
+import BottomNav from "@/app/components/BottomNav";
 
 const ABILITIES = [
   { label: "Attack", key: "attack" },
@@ -67,6 +68,7 @@ export default function Details({ params }) {
         </div>
         <Spacer size={102} />
       </MainWrapper>
+      <BottomNav />
     </>
   );
 }

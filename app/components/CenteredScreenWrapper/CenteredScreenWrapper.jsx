@@ -1,7 +1,11 @@
 import styled from "styled-components";
 
-export default function CenteredScreenWrapper({ children }) {
-  return <Wrapper className="screen-container">{children}</Wrapper>;
+export default function CenteredScreenWrapper({ children, ...delegated }) {
+  return (
+    <Wrapper className="screen-container" {...delegated}>
+      {children}
+    </Wrapper>
+  );
 }
 
 const Wrapper = styled.div`
