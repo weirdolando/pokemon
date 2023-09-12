@@ -52,6 +52,7 @@ export default function MainCard({
         // I only store these 4 data since firestore would send an error if the data is too large
         pokemon: {
           key: pokemon.key,
+          catchRate: pokemon.catchRate,
           abilities: pokemon.abilities,
           sprite: pokemon.sprite,
           species: pokemon.species,
@@ -72,6 +73,17 @@ export default function MainCard({
         <PlaceholderCenter>Select a Pokemon</PlaceholderCenter>
       </Wrapper>
     );
+  }
+
+  const pokemonCatchRateString =
+    pokemon.catchRate?.percentageWithOrdinaryPokeballAtFullHealth;
+  const pokemonCatchRatePercentage =
+    pokemonCatchRateString && Number(pokemonCatchRateString.replace("%", ""));
+
+  function handleCatchPokemon(catchRatePercentage = 0) {
+    Math.random() * 100 < catchRatePercentage
+      ? alert("Pokemon catched")
+      : alert("Pokemon breaks free");
   }
 
   return (
@@ -102,8 +114,17 @@ export default function MainCard({
             } else return null;
           })}
         <ButtonWrapper>
-          <UnstyledButton onClick={handleToggleFavorites}>
+          <UnstyledButton
+            onClick={handleToggleFavorites}
+            title="Add to favorite"
+          >
             <Icon id={isUserFavorite ? "heart-solid" : "heart"} size={24} />
+          </UnstyledButton>
+          <UnstyledButton
+            onClick={() => handleCatchPokemon(pokemonCatchRatePercentage)}
+            title="Catch pokemon"
+          >
+            <Icon id="pokeball" size={24} />
           </UnstyledButton>
           {withButton && (
             <LinkButton href={`/pokemon/${pokemon.key}`}>

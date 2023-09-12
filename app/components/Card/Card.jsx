@@ -43,6 +43,7 @@ export default function Card({ pokemon, onSelectPokemon }) {
         // I only store these 4 data since firestore would send an error if the data is too large
         pokemon: {
           key: pokemon.key,
+          catchRate: pokemon.catchRate,
           abilities: pokemon.abilities,
           sprite: pokemon.sprite,
           species: pokemon.species,
@@ -53,6 +54,17 @@ export default function Card({ pokemon, onSelectPokemon }) {
         alert("Something went wrong");
       }
     }
+  }
+
+  const pokemonCatchRateString =
+    pokemon.catchRate?.percentageWithOrdinaryPokeballAtFullHealth;
+  const pokemonCatchRatePercentage =
+    pokemonCatchRateString && Number(pokemonCatchRateString.replace("%", ""));
+
+  function handleCatchPokemon(catchRatePercentage) {
+    Math.random() * 100 < catchRatePercentage
+      ? alert("Pokemon catched")
+      : alert("Pokemon breaks free");
   }
 
   return (
@@ -68,10 +80,16 @@ export default function Card({ pokemon, onSelectPokemon }) {
       </div>
       <Title>{pokemon.species}</Title>
       <ButtonGroupWrapper>
-        <UnstyledButton onClick={handleToggleFavorites}>
+        <UnstyledButton onClick={handleToggleFavorites} title="Add to favorite">
           <Icon id={isUserFavorite ? "heart-solid" : "heart"} size={24} />
         </UnstyledButton>
-        <Link href={`/pokemon/${pokemon.key}`}>
+        <UnstyledButton
+          onClick={() => handleCatchPokemon(pokemonCatchRatePercentage)}
+          title="Catch pokemon"
+        >
+          <Icon id="pokeball" size={24} />
+        </UnstyledButton>
+        <Link href={`/pokemon/${pokemon.key}`} title="Pokemon detail">
           <Icon id="info" size={24} color="white" />
         </Link>
       </ButtonGroupWrapper>
